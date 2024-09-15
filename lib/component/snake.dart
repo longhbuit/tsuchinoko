@@ -69,6 +69,7 @@ class Snake extends Component with HasGameRef<SnakeGame> {
   }
 
   void eat() {
+    print("Snake is eating");
     head = head.addBlock(head.direction);
   }
 }
