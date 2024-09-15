@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:event_bus/event_bus.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
@@ -19,16 +20,20 @@ class SnakeGame extends FlameGame with KeyboardEvents {
   int score = 0;
   late Timer timer;
   late Snake snake;
+  late Food food;
+  late EventBus eventBus;
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
     snake = Snake();
+    food = Food(pos: randomCell());
+    eventBus = EventBus();
 
     timer = Timer(1, repeat: true, onTick: snake.move);
     add(BackGround());
     add(snake);
-    add(Food(pos: Vector2(5, 5)));
+    add(food);
     add(TimerComponent(period: .5, onTick: snake.move, repeat: true));
   }
 

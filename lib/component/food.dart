@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:tsuchinoko/component/snake_game.dart';
 import 'package:tsuchinoko/game_config.dart';
 
+import 'events.dart';
+
 class Food extends PositionComponent with HasGameRef<SnakeGame> {
   Food({required Vector2 pos}) : super(position: pos * GameConfig.cellSize);
 
@@ -20,7 +22,9 @@ class Food extends PositionComponent with HasGameRef<SnakeGame> {
   @override
   void onMount() {
     super.onMount();
-    position = gameRef.randomCell() * GameConfig.cellSize;
+    gameRef.eventBus.on<FoodEatenEvent>().listen((event) {
+      respawn();
+    });
   }
 
   void respawn() {
