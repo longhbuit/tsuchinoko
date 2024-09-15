@@ -8,7 +8,10 @@ import 'package:tsuchinoko/game_config.dart';
 import 'events.dart';
 
 class Food extends PositionComponent with HasGameRef<SnakeGame> {
-  Food({required Vector2 pos}) : super(position: pos * GameConfig.cellSize);
+  Vector2 pos;
+
+  Food({required Vector2 this.pos})
+      : super(position: pos * GameConfig.cellSize);
 
   @override
   void render(Canvas canvas) {
@@ -28,6 +31,7 @@ class Food extends PositionComponent with HasGameRef<SnakeGame> {
   }
 
   void respawn() {
-    position = gameRef.randomCell() * GameConfig.cellSize;
+    pos = gameRef.randomCell();
+    position = pos * GameConfig.cellSize;
   }
 }

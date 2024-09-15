@@ -34,7 +34,11 @@ class SnakeGame extends FlameGame with KeyboardEvents {
     add(BackGround());
     add(snake);
     add(food);
-    add(TimerComponent(period: .5, onTick: snake.move, repeat: true));
+    add(TimerComponent(period: .5, onTick: onTickTimer, repeat: true));
+  }
+
+  void onTickTimer() {
+    snake.move();
   }
 
   KeyEventResult onKeyEvent(

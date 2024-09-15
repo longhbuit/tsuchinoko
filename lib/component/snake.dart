@@ -17,6 +17,25 @@ class Snake extends Component with HasGameRef<SnakeGame> {
   }
 
   void move() {
+    checkAlive();
+    if (!alive) {
+      return;
+    }
+
+    if (checkEating()) {
+      eat();
+      gameRef.eventBus.fire(FoodEatenEvent());
+    } else {
+      SnakeBlock block = tail;
+      while (block.nextBlock != null) {
+        block.move();
+        block = block.nextBlock!;
+      }
+      block.move();
+    }
+  }
+
+  void checkAlive() {
     var newPos = head.pos + head.direction.opposite;
     if (newPos.x < 0 ||
         newPos.x >= gameRef.cols ||
@@ -24,18 +43,6 @@ class Snake extends Component with HasGameRef<SnakeGame> {
         newPos.y >= gameRef.rows) {
       alive = false;
     }
-    if (!alive) {
-      return;
-    }
-    SnakeBlock block = tail;
-    while (block.nextBlock != null) {
-      block.move();
-      block = block.nextBlock!;
-    }
-    block.move();
-    print(head.pos);
-    print( gameRef.rows);
-    gameRef.eventBus.fire(FoodEatenEvent());
   }
 
   @override
@@ -49,5 +56,19 @@ class Snake extends Component with HasGameRef<SnakeGame> {
 
   void changeDirection(Direction direction) {
     head.direction = direction;
+  }
+
+  bool checkEating() {
+    /**
+     * Check if the head is in the same position as the food
+     * If eating then add a new block to the snake and not move
+     */
+    print(head.pos+head.direction.opposite);
+    print(gameRef.food.position);
+    return head.pos+head.direction.opposite == gameRef.food.pos;
+  }
+
+  void eat() {
+    head = head.addBlock(head.direction);
   }
 }
