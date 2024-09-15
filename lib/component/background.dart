@@ -12,7 +12,7 @@ class BackGround extends PositionComponent with HasGameRef<SnakeGame> {
     canvas.drawRect(
       Rect.fromLTWH(0, 0, gameRef.cols * gameRef.cellSize,
           gameRef.rows * gameRef.cellSize),
-      Paint()..color = Colors.blue,
+      Paint()..color = Colors.yellow,
     );
   }
 }
