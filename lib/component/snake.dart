@@ -9,6 +9,8 @@ import 'package:tsuchinoko/component/types.dart';
 class Snake extends Component with HasGameRef<SnakeGame> {
   late SnakeBlock tail;
   late SnakeBlock head;
+  late Direction upcomingDirection = Direction.right;
+
   bool alive = true;
 
   Snake() {
@@ -17,6 +19,7 @@ class Snake extends Component with HasGameRef<SnakeGame> {
   }
 
   void move() {
+    head.direction = upcomingDirection;
     checkAlive();
     if (!alive) {
       return;
@@ -68,7 +71,7 @@ static Vector2 VECTOR_ZERO = Vector2(0, 0);
     if (head.direction.opposite+direction.opposite==VECTOR_ZERO){
       return;
     }
-    head.direction = direction;
+    upcomingDirection = direction;
   }
 
   bool checkEating() {
