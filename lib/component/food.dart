@@ -1,25 +1,20 @@
-import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flutter/material.dart';
 import 'package:tsuchinoko/component/snake_game.dart';
 import 'package:tsuchinoko/game_config.dart';
 
 import 'events.dart';
 
-class Food extends PositionComponent with HasGameRef<SnakeGame> {
+class Food extends SpriteComponent with HasGameRef<SnakeGame> {
   Vector2 pos;
 
-  Food({required Vector2 this.pos})
+  Food({required this.pos})
       : super(position: pos * GameConfig.cellSize);
 
   @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, gameRef.cellSize, gameRef.cellSize),
-      Paint()..color = Colors.red,
-    );
+  Future<dynamic> onLoad() async {
+    sprite = await Sprite.load("food.png");
+    return super.onLoad();
   }
 
   @override
