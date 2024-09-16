@@ -24,11 +24,9 @@ class Food extends SpriteComponent with HasGameRef<SnakeGame> {
       respawn();
     });
   }
-  void respawn() {
-    do {
-      pos = gameRef.randomCell();
-    } while (gameRef.snake.body.contains(pos)); // Kiểm tra xem ô mới có bị rắn chiếm giữ không
 
+  void respawn() {
+    pos = gameRef.randomCell();
     position = pos * GameConfig.cellSize;
   }
 }
