@@ -29,9 +29,11 @@ class Food extends PositionComponent with HasGameRef<SnakeGame> {
       respawn();
     });
   }
-
   void respawn() {
-    pos = gameRef.randomCell();
+    do {
+      pos = gameRef.randomCell();
+    } while (gameRef.snake.body.contains(pos)); // Kiểm tra xem ô mới có bị rắn chiếm giữ không
+
     position = pos * GameConfig.cellSize;
   }
 }
