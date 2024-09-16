@@ -63,8 +63,11 @@ class Snake extends Component with HasGameRef<SnakeGame> {
       block = block.nextBlock;
     }
   }
-
+static Vector2 VECTOR_ZERO = Vector2(0, 0);
   void changeDirection(Direction direction) {
+    if (head.direction.opposite+direction.opposite==VECTOR_ZERO){
+      return;
+    }
     head.direction = direction;
   }
 
