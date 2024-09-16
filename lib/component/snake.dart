@@ -42,7 +42,17 @@ class Snake extends Component with HasGameRef<SnakeGame> {
         newPos.y < 0 ||
         newPos.y >= gameRef.rows) {
       alive = false;
+      return;
     }
+    var block = tail.nextBlock;
+    while (block != null)
+      {
+        if (block.pos ==newPos) {
+          alive = false;
+          return;
+        }
+        block = block.nextBlock;
+      }
   }
 
   @override
