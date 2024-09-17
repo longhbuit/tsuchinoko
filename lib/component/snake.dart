@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -19,27 +20,31 @@ class Snake extends Component with HasGameRef<SnakeGame> {
   }
 
   void move() {
-    head.direction = upcomingDirection;
     checkAlive();
     if (!alive) {
       return;
     }
-
+    head.direction = upcomingDirection;
     if (checkEating()) {
       eat();
       gameRef.eventBus.fire(FoodEatenEvent());
     } else {
       SnakeBlock block = tail;
-      while (block.nextBlock != null) {
-        block.move();
-        block = block.nextBlock!;
-      }
-      block.move();
+      tail = tail.nextBlock!;
+      tail.prevBlock = null;
+
+      head.nextBlock = block;
+      block.nextBlock = null;
+      block.prevBlock = head;
+      block.pos = head.pos + head.direction.opposite;
+      block.direction = head.direction;
+      block.position = block.pos * gameRef.cellSize + SnakeBlock.halfSizeVector;
+      head = block;
     }
   }
 
   void checkAlive() {
-    var newPos = head.pos + head.direction.opposite;
+    var newPos = head.pos + upcomingDirection.opposite;
     if (newPos.x < 0 ||
         newPos.x >= gameRef.cols ||
         newPos.y < 0 ||
@@ -48,27 +53,29 @@ class Snake extends Component with HasGameRef<SnakeGame> {
       return;
     }
     var block = tail.nextBlock;
-    while (block != null)
-      {
-        if (block.pos ==newPos) {
-          alive = false;
-          return;
-        }
-        block = block.nextBlock;
+    while (block != null) {
+      if (block.pos == newPos) {
+        alive = false;
+        return;
       }
+      block = block.nextBlock;
+    }
   }
 
   @override
-  void render(Canvas canvas) {
+  Future<dynamic> onLoad() async {
     SnakeBlock? block = tail;
     while (block != null) {
       gameRef.add(block);
       block = block.nextBlock;
     }
+    return Future.value();
   }
-static Vector2 VECTOR_ZERO = Vector2(0, 0);
+
+  static Vector2 VECTOR_ZERO = Vector2(0, 0);
+
   void changeDirection(Direction direction) {
-    if (head.direction.opposite+direction.opposite==VECTOR_ZERO){
+    if (head.direction.opposite + direction.opposite == VECTOR_ZERO) {
       return;
     }
     upcomingDirection = direction;
@@ -79,15 +86,17 @@ static Vector2 VECTOR_ZERO = Vector2(0, 0);
      * Check if the head is in the same position as the food
      * If eating then add a new block to the snake and not move
      */
-    print(head.pos+head.direction.opposite);
+    print(head.pos + head.direction.opposite);
     print(gameRef.food.position);
-    return head.pos+head.direction.opposite == gameRef.food.pos;
+    return head.pos + head.direction.opposite == gameRef.food.pos;
   }
 
   void eat() {
     print("Snake is eating");
     head = head.addBlock(head.direction);
+    gameRef.add(head);
   }
+
   List<Vector2> get body {
     List<Vector2> bodyPositions = [];
     SnakeBlock? currentBlock = tail;
