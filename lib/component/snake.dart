@@ -88,4 +88,13 @@ static Vector2 VECTOR_ZERO = Vector2(0, 0);
     print("Snake is eating");
     head = head.addBlock(head.direction);
   }
+  List<Vector2> get body {
+    List<Vector2> bodyPositions = [];
+    SnakeBlock? currentBlock = tail;
+    while (currentBlock != null) {
+      bodyPositions.add(currentBlock.pos);
+      currentBlock = currentBlock.nextBlock;
+    }
+    return bodyPositions;
+  }
 }

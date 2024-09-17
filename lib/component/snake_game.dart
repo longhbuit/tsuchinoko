@@ -34,7 +34,7 @@ class SnakeGame extends FlameGame with KeyboardEvents {
     add(BackGround());
     add(snake);
     add(food);
-    add(TimerComponent(period: .5, onTick: onTickTimer, repeat: true));
+    add(TimerComponent(period: .2, onTick: onTickTimer, repeat: true));
   }
 
   void onTickTimer() {
@@ -67,10 +67,13 @@ class SnakeGame extends FlameGame with KeyboardEvents {
   }
 
   Vector2 randomCell() {
-    // Random cell in cols and rows
-    return Vector2(
-      Random().nextInt(cols).toDouble(),
-      Random().nextInt(rows).toDouble(),
-    );
+    Vector2 newPos;
+    do {
+      newPos = Vector2(
+        Random().nextInt(cols).toDouble(),
+        Random().nextInt(rows).toDouble(),
+      );
+    } while (snake.body.contains(newPos)); // Kiểm tra xem ô mới có bị rắn chiếm giữ không
+    return newPos;
   }
 }
