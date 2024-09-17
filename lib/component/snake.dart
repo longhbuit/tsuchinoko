@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -10,7 +11,7 @@ import 'package:tsuchinoko/component/types.dart';
 class Snake extends Component with HasGameRef<SnakeGame> {
   late SnakeBlock tail;
   late SnakeBlock head;
-  late Direction upcomingDirection = Direction.right;
+  Queue<Direction> queueDirection = Queue<Direction>();
 
   bool alive = true;
 
@@ -24,7 +25,11 @@ class Snake extends Component with HasGameRef<SnakeGame> {
     if (!alive) {
       return;
     }
+    var upcomingDirection = queueDirection.first;
     head.direction = upcomingDirection;
+    if (queueDirection.length > 1) {
+      queueDirection.removeFirst();
+    }
     if (checkEating()) {
       eat();
       gameRef.eventBus.fire(FoodEatenEvent());
@@ -44,6 +49,7 @@ class Snake extends Component with HasGameRef<SnakeGame> {
   }
 
   void checkAlive() {
+    var upcomingDirection = queueDirection.first;
     var newPos = head.pos + upcomingDirection.opposite;
     if (newPos.x < 0 ||
         newPos.x >= gameRef.cols ||
@@ -64,6 +70,7 @@ class Snake extends Component with HasGameRef<SnakeGame> {
 
   @override
   Future<dynamic> onLoad() async {
+    queueDirection.add(Direction.right);
     SnakeBlock? block = tail;
     while (block != null) {
       gameRef.add(block);
@@ -75,10 +82,11 @@ class Snake extends Component with HasGameRef<SnakeGame> {
   static Vector2 VECTOR_ZERO = Vector2(0, 0);
 
   void changeDirection(Direction direction) {
-    if (head.direction.opposite + direction.opposite == VECTOR_ZERO) {
+
+    if (queueDirection.last.opposite + direction.opposite == VECTOR_ZERO) {
       return;
     }
-    upcomingDirection = direction;
+    queueDirection.addLast(direction);
   }
 
   bool checkEating() {
