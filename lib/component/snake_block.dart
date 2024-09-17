@@ -9,6 +9,11 @@ import 'package:tsuchinoko/game_config.dart';
 class SnakeBlock extends SpriteComponent with HasGameRef<SnakeGame> {
   SnakeBlock? nextBlock;
   SnakeBlock? prevBlock;
+  late Sprite body;
+  late Sprite head;
+  late Sprite tail;
+  late Sprite corner;
+
   Direction direction;
   Vector2 pos;
   static Vector2 halfSizeVector =
@@ -27,19 +32,12 @@ class SnakeBlock extends SpriteComponent with HasGameRef<SnakeGame> {
     return newBlock;
   }
 
-  void move() {
-    if (nextBlock != null) {
-      direction = nextBlock!.direction;
-      pos = nextBlock!.pos;
-      position = pos * GameConfig.cellSize + halfSizeVector;
-    } else {
-      pos = pos + direction.opposite;
-      position = pos * GameConfig.cellSize + halfSizeVector;
-    }
-  }
-
   @override
   Future<dynamic> onLoad() async {
+    head = await Sprite.load('head.png');
+    body = await Sprite.load('body.png');
+    tail = await Sprite.load('tail.png');
+    corner = await Sprite.load('body_corner.png');
     super.onLoad();
     await draw();
     return Future.value();
@@ -53,17 +51,17 @@ class SnakeBlock extends SpriteComponent with HasGameRef<SnakeGame> {
 
   Future<void> draw() async {
     if (nextBlock == null) {
-      sprite = await Sprite.load('head.png');
+      sprite = head;
       angle = direction.angle();
     } else if (prevBlock == null) {
-      sprite = await Sprite.load('tail.png');
+      sprite = tail;
       angle = direction.angle();
     } else {
       if (prevBlock!.direction == direction) {
-        sprite = await Sprite.load('body.png');
+        sprite = body;
         angle = direction.angle();
       } else {
-        sprite = await Sprite.load('body_corner.png');
+        sprite = corner;
         angle = calculateCornerAngle(prevBlock!.direction, direction);
       }
     }
